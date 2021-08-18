@@ -1,10 +1,10 @@
 # A Survey of Entity Alignment between Knowledge Graph
 
-### Abstract
+## Abstract
 
 Knowledge Graphs (KGs), as a structured human knowledge, manage data in an ease-of-store, recognizable, and understandable way for machines and provide a rich knowledge base for different artificial intelligence applications. However, current multi-source KGs have heterogeneity and complementarity, and it is necessary to fuse heterogeneous knowledge from different data sources or different languages into a unified and consistent KG. Entity alignment aims to find equivalence relations between entities in different knowledge graphs but semantically represent the same real-world object, which is the most fundamental and essential technology in knowledge fusion. This paper investigated some of the latest knowledge graph entity alignment methods and summarized their core technologies and features from different aspects. Our full investigation gives a comprehensive outlook on several promising research directions for future work.
 
-### Introduction
+## Introduction
 
 The knowledge graph is a structured representation of the objective world knowledge, consisting of entities (instances), relationships, attributes, and semantic descriptions. An entity is an object in the objective world; a relationship describes the interaction and influence between two entities; an attribute describes the characteristics of an entity; and a semantic description includes the entity name string, numeric value, literal information, and string attribute value, etc. The knowledge in the knowledge graph is generally stored using Resource Description Framework (RDF), and each piece of knowledge is represented as a relational triplet $< head\  entity;relationship;tail\  entity >$ or an attribute type triplet $< head\  entity;attribute;attribute\  value >$ becomes what we generally call a Knowledge Graph.
 
@@ -12,17 +12,17 @@ However, as the applications supported by knowledge graphs are increasingly dive
 
 According to the different Knowledge embedding methods, the current mainstream research of entity alignment can be divided into two directions. One is based on knowledge embedding, which regards knowledge graph as a triple to model, and uses the improved ==TransE== algorithm to learn the embedded representation of nodes. Another method is based on the improved ==graph convolution neural network==. In this method, the knowledge graph is modeled as a graph. Convolution, attention and other operations can be used to learn the complex relationship between entities in the graph. Even if the two entities are not directly connected, GNN can also model their relationship
 
-### Problem definition
+## Problem definition
 
 A KG $G$ consists of a combination of relationship triples in the form of $<h, r, t>$, where $r$ is a relationship (*predicate*) between two entities $h$ (*subject*) and $t$ (*object*), and attribute triples in the form of $<h, r, a>$, where $a$ is an attribute value of entity $h$ with respect to the predicate (relationship) $r$.  Given two KGs $G_1$ and $ G_2$, the task of entity alignment aims to find every pair $<h_1, h_2>$ where $h_1 \in G_1$, $h_2 \in G_2$, and $h_1$ and $h_2$ represent the same real-world entity. We use an embedding-based model that assigns a continuous representation for each element of a triple in the forms of $<h, r, t>$and$<h, r, a>$, where the bold-face letters denote the vector representations of the corresponding element.
 
-### Entity alignment based on representation learning
+## Entity alignment based on representation learning
 
 The core of the entity alignment model based on semantic matching is to learn different low-dimensional vector representations for each entity in the knowledge graph according to its semantics. In order to bring better alignment results, these low-dimensional vectors need to contain the semantic information about the entity, which needs to be aligned as much as possible.
 
 In this subsection, we introduce in detail the methods used for the embedding learning module, which leverages the KG structure to generate an embedding for each entity. TransE and GCN are the mainstream models. Here we provide a brief description of these basic models.
 
-#### Semantic matching-based models
+### Semantic matching-based models
 
 **TransE** A kind of representative method is based on the knowledge representation model ==TransE==. TransE interprets relations as translations operating on the low-dimensional representations of entities. More specifically, given a relational triple $(h, r, t)$, TransE suggests that the embedding of the tail entity t should be close to the embedding of the head entity $h$ plus the embedding of the relationship $r$, i.e., $\vec{h}+\vec{r} \approx \vec{t}$. As thus, the structural information of entities can be preserved and the entities that share similar neighbors will have close representations in the embedding space.
 
@@ -34,9 +34,9 @@ The earliest semantic matching model ==MTransE== , uses TransE to learn the vect
 
 ==BERT-INT== brings us the latest state-of-the-art results on the DBP15K datasets, it builds the interactions between neighbors or attributes based on their powerful BERT embeddings of entity’s name or description, which can obtain fine-grained matches of neighbors or attributes. Although the BERT-INT model achieves excellent experimental results on the DBP15K datasets, but in many real entity alignment scenarios, it will be difficult for us to obtain powerful description information with high generality for the characteristics of entities as in DBpedia, and at this time we think models need to reconsider the importance of knowledge graph structural information in entity alignment. In entity alignment task, side information (edge information: including name, description and attribute) of knowledge map is more useful than structural information (structure information: graph structure of knowledge map). Moreover, due to the heterogeneity of the knowledge map, the aligned entities often do not have the same neighborhood, which makes it difficult to use the structural information of the knowledge map, so the alignment accuracy is low. The method proposed in this paper only uses the edge information of the knowledge map. Instead of aggregating the neighbor nodes, it calculates the interaction between the neighbor nodes (the interaction of the neighbor node name / description information), which can capture the fine-grained matching between the neighbor nodes. Similarly, the interaction of the attributes of the node itself is calculated.
 
-#### Graph neural networks-based models
+### Graph neural networks-based models
 
-**GCN**	The graph convolutional network (GCN) is a kind of convolutional networks that directly operates on graph-structured data. It generates node-level embeddings by encoding the information about node neighborhoods. The inputs of the GCN include feature vectors for every node in the KG, and a representative description of the graph structure in matrix form, i.e., an adjacency matrix. The output is a new feature matrix. A GCN model normally comprises multiple stacked GCN layers, hence it can capture a partial KG structure that is several hops away from the entity.
+**GCN** The graph convolutional network (GCN) is a kind of convolutional networks that directly operates on graph-structured data. It generates node-level embeddings by encoding the information about node neighborhoods. The inputs of the GCN include feature vectors for every node in the KG, and a representative description of the graph structure in matrix form, i.e., an adjacency matrix. The output is a new feature matrix. A GCN model normally comprises multiple stacked GCN layers, hence it can capture a partial KG structure that is several hops away from the entity.
 
 The earliest usage of graph neural network for entity alignment is ==GCN-Align==. GCN-Align uses GCN to learn the vector representation of entities, and at the same time, allows two GCNs encoding different knowledge graphs to use the same parameters so that they can use the structure between entities to propagate the alignment relationship between entities. Although the graph neural network is used to encode the information of the graph, the current model only considers node-level alignment. In this method, the network structure of GCN is constructed by using the entity relationship in each kg, and only the equivalent relationship between entities is considered in the model training. This method has less model complexity and can achieve good alignment effect. Our method only needs pre aligned entities as training data, and does not need pre aligned relationships or attributes between KGs. This method effectively combines entity relationship and entity attribute, and improves the consistency of the results.
 
@@ -48,9 +48,9 @@ The earliest usage of graph neural network for entity alignment is ==GCN-Align==
 
 ==EPEA== first generates a paired connection graph (PCG) of KGs, where the nodes are entity pairs and the edges correspond to relation pairs. Then, it learns the node (entity pair) embedding of PCG, which is used to predict the equivalent relationship of entities. To obtain an ideal embedding representation, a convolutional neural network is used to generate the similarity feature of the entity pair from the attributes of the entity pair. Finally, the GNN is used to propagate the similarity feature and obtain the final embedding of the entity pair, which has achieved good results.
 
-### Experiments
+## Experiments
 
-#### Datasets
+### Datasets
 
 In order to test the overall performance of these models, we used the DBP15K dataset, which is commonly used in entity alignment tasks. DBP15K is a cross-lingual dataset that is extracted from DBpedia (2016–04). It contains the structural knowledge of three language pairs of encyclopedias in Chinese-English, Japanese-English, and French-English. Each language
 pair has 15;000 equivalent entity links. Its statistics are in Table 1.
@@ -64,10 +64,10 @@ pair has 15;000 equivalent entity links. Its statistics are in Table 1.
 | DBP15K$_{FR-EN}$ | FR   |  66,858  |     1,379     |   4,547    |   192,191    |    528,665    |
 |                  | EN   | 105,889  |     2,209     |   6,422    |   278,590    |    576,543    |
 
-#### Metrics
+### Metrics
 
 We randomly select 30% of equivalent entity links for training with all models, and the remaining 70% of identical entity links are used for testing. Following convention, we use $MRR$ and $Hits@N$ as our evaluation metrics. Among them, MRR is the Mean Reciprocal Rank of all correctly aligned entities, and $Hits@N$ is the proportion of correctly aligned entities whose rank is not greater than $N$ (usually $N$ is 1, 5, 10). The higher the $Hits@N$ and $MRR$, the better the performance. Each evaluation is repeated five times with different random seeds, and averaged results are reported.
 
-### Conclusion
+## Conclusion
 
 In this work, we briefly describe the research work related to entity alignment, including traditional entity alignment methods, knowledge representation learning methods, and knowledge graph entity alignment methods based on representation learning. At present, the alignment of knowledge graph entities based on representation learning is still the mainstream research method. Models based on semantic matching are efficient and straightforward, but the results often rely on pre-aligned entity pairs to a large extent; models based on graph neural networks can make fuller use of prior equivalence relations, but they still have not been able to overcome the challenge of knowledge graphs such as heterogeneity; Besides, the knowledge that has potential meaning for entity alignment such as concepts and conceptual hierarchy in the knowledge graph has not been explored and used in entity alignment work, concept an indispensable piece in the meaning triangle (real-world object, symbolic entity, and concept) is inadequately addressed by the current approaches, In our future work we will explore the effective integration of concept and conceptual hierarchy with entity’s powerful side information by large pre-trained language models. In response to the comparative fairness problem caused by the lack of open source code in cutting-edge methods, we open-sourced a friendly knowledge graph entity alignment toolkit for new fishes based on knowledge graph representation learning. Organize the components of different models in a modular form to improve the reusability of the modules and retain the scalability of the framework. Lightweight and efficient code allows researchers to quickly get started with the framework to write their own entity alignment models. According to our full investigation, we also provide a thorough outlook on several promising research directions for future work. We hope that our work can help more researchers interested in entity alignment and promote the continuous development of related fields.
